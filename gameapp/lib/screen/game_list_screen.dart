@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:gameapp/model/game.dart';
+import 'package:gameapp/components/game_card.dart';
+import 'package:gameapp/model/entity/game.dart';
 import 'package:gameapp/model/game_list_response.dart';
 
 import 'package:gameapp/http_service.dart';
+import 'package:gameapp/screen/game_info_screen.dart';
 
 class GameListScreen extends StatefulWidget {
   GameListScreen({Key? key}) : super(key: key);
@@ -29,7 +31,7 @@ class _GameListScreenState extends State<GameListScreen> {
       isLoading = true;
 
       response = await http!.getRequest(
-          "?page=4&page_size=20&platforms=187&ordering=-released&${apiKey}");
+          "?page=3&page_size=50&platforms=187&ordering=-released${apiKey}");
 
       isLoading = false;
 
@@ -60,7 +62,7 @@ class _GameListScreenState extends State<GameListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Get Single user"),
+        title: Text("Game App"),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -70,7 +72,8 @@ class _GameListScreenState extends State<GameListScreen> {
                     final game = games![index];
                     return new GestureDetector(
                       //You need to make my child interactive
-                      onTap: () => print(game.id),
+                      onTap: () => Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => GameInfoScreen(id: int.parse("${game.id}"))),),
                       child: Align(
                         alignment:
                             Alignment.center, //or choose another Alignment
@@ -78,44 +81,10 @@ class _GameListScreenState extends State<GameListScreen> {
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width *
                               0.90, //you sure it should be 0.001?
-                          height: MediaQuery.of(context).size.height * 0.27,
+                          height: MediaQuery.of(context).size.height * 0.28,
                           child: Container(
                             padding: EdgeInsets.all(10),
-                            child: Card(
-                              semanticContainer: true,
-                              //I am the clickable child
-                              child: new Column(
-                                children: <Widget>[
-                                  //new Image.network(video[index]),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20)),
-                                          child: Image.network(
-                                              '${game.backgroundImage}',
-                                              width: 300,
-                                              height: 150,
-                                              fit: BoxFit.fill),
-                                        ),
-                                      ),
-                                      Text(
-                                        "${game.name}",
-                                        style: new TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                            child: GameCard(game: game),
                           ),
                         ),
                       ),

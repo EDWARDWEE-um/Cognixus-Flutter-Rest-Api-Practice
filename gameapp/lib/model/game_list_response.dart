@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:gameapp/model/game.dart';
+import 'package:gameapp/model/entity/game.dart';
 part 'game_list_response.g.dart';
 
 @JsonSerializable()
